@@ -1,0 +1,3 @@
+[submodule "libktxsharp"]
+	path = libktxsharp
+	url = https://github.com/mcraiha/libktxsharp.git
