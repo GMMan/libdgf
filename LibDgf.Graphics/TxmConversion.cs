@@ -134,7 +134,7 @@ namespace LibDgf.Graphics
                             bw.Write(pixel.R);
                             bw.Write(pixel.G);
                             bw.Write(pixel.B);
-                            bw.Write((byte)((pixel.A + 1) >> 1));
+                            bw.Write(pixel.A); // Should be halved, but full range is used on PC
                         }
                         else
                         {
@@ -239,8 +239,9 @@ namespace LibDgf.Graphics
                     byte r = br.ReadByte();
                     byte g = br.ReadByte();
                     byte b = br.ReadByte();
-                    int a = br.ReadByte() * 2;
-                    if (a > 255) a = 255;
+                    //int a = br.ReadByte() * 2;
+                    //if (a > 255) a = 255;
+                    byte a = br.ReadByte(); // Should be doubled, but full scale is used on PC
                     row[x] = new Rgba32(r, g, b, (byte)a);
                 }
             }
