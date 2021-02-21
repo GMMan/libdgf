@@ -177,7 +177,7 @@ namespace LibDgf.Graphics
                 if (imageHeader.ClutPixelFormat == TxmPixelFormat.PSMCT32)
                 {
                     stream.Seek(16, SeekOrigin.Begin);
-                    palette = GetRgba32Palette(br, imageHeader.ClutWidth, imageHeader.ClutHeight);
+                    palette = ReadRgba32Palette(br, imageHeader.ClutWidth, imageHeader.ClutHeight);
                     //fs.Seek(16, SeekOrigin.Begin);
                     //using (var palImage = ConvertTxmRgba32(br, imageHeader.ClutWidth, imageHeader.ClutHeight))
                     //{
@@ -271,7 +271,7 @@ namespace LibDgf.Graphics
             return img;
         }
 
-        static Rgba32[] GetRgba32Palette(BinaryReader br, int width, int height)
+        public static Rgba32[] ReadRgba32Palette(BinaryReader br, int width, int height)
         {
             int count = width * height;
             Rgba32[] colors = new Rgba32[count];
