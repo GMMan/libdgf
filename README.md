@@ -8,6 +8,7 @@ Currently implemented
 
 **Final**
 - DAT: file packs
+- font/*.pak: font pack
 - Sound effects catalog (read support only)
 - TXM: texture files
 
