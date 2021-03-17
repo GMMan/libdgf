@@ -22,7 +22,7 @@ namespace LibDgf.Graphics.Mesh
 
         public ObjConverter(DatReader textureDat)
         {
-            this.textureDat = textureDat ?? throw new ArgumentNullException(nameof(textureDat));
+            this.textureDat = textureDat;
         }
 
         public void ConvertObj(Pdb pdb, StreamWriter sw)
@@ -269,6 +269,7 @@ namespace LibDgf.Graphics.Mesh
         public void ExportTextures(StreamWriter mtlWriter, string outputPath)
         {
             if (disposedValue) throw new ObjectDisposedException(GetType().FullName);
+            if (textureDat == null) throw new InvalidOperationException("No texture pack supplied.");
 
             int i = 0;
             numWrittenTextures = 0;
@@ -378,7 +379,7 @@ namespace LibDgf.Graphics.Mesh
             {
                 if (disposing)
                 {
-                    textureDat.Dispose();
+                    if (textureDat != null) textureDat.Dispose();
                 }
 
                 disposedValue = true;
