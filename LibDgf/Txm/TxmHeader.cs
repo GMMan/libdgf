@@ -11,12 +11,12 @@ namespace LibDgf.Txm
         public TxmPixelFormat ImageVideoPixelFormat { get; set; }
         public short ImageWidth { get; set; }
         public short ImageHeight { get; set; }
-        public short ImageBufferBase { get; set; }
+        public ushort ImageBufferBase { get; set; }
         public TxmPixelFormat ClutPixelFormat { get; set; }
         public byte Misc { get; set; } // 0x0f = level, 0x70 = count, 0x80 = fast count
         public short ClutWidth { get; set; }
         public short ClutHeight { get; set; }
-        public short ClutBufferBase { get; set; }
+        public ushort ClutBufferBase { get; set; }
 
         public void Read(BinaryReader br)
         {
@@ -24,12 +24,12 @@ namespace LibDgf.Txm
             ImageVideoPixelFormat = (TxmPixelFormat)br.ReadByte();
             ImageWidth = br.ReadInt16();
             ImageHeight = br.ReadInt16();
-            ImageBufferBase = br.ReadInt16();
+            ImageBufferBase = br.ReadUInt16();
             ClutPixelFormat = (TxmPixelFormat)br.ReadByte();
             Misc = br.ReadByte();
             ClutWidth = br.ReadInt16();
             ClutHeight = br.ReadInt16();
-            ClutBufferBase = br.ReadInt16();
+            ClutBufferBase = br.ReadUInt16();
         }
 
         public void Write(BinaryWriter bw)

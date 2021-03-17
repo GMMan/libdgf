@@ -10,7 +10,7 @@ namespace LibDgf.Graphics
 {
     public static class TxmConversion
     {
-        public static void ConvertImageToTxm(string inPath, Stream outStream, byte level = 1, short bufferBase = 0, short paletteBufferBase = 0)
+        public static void ConvertImageToTxm(string inPath, Stream outStream, byte level = 1, ushort bufferBase = 0, ushort paletteBufferBase = 0)
         {
             using (var image = Image.Load<Rgba32>(inPath))
             {
@@ -162,13 +162,21 @@ namespace LibDgf.Graphics
 
         public static void ConvertTxmToPng(Stream stream, string outPath)
         {
+            using (var image = ConvertTxmToImage(stream))
+            {
+                image.SaveAsPng(outPath);
+            }
+        }
+
+        public static Image<Rgba32> ConvertTxmToImage(Stream stream)
+        {
             BinaryReader br = new BinaryReader(stream);
             TxmHeader imageHeader = new TxmHeader();
             imageHeader.Read(br);
 
             Console.WriteLine(imageHeader);
-            if (imageHeader.Misc != 1)
-                Console.WriteLine("Different level!");
+            //if (imageHeader.Misc != 1)
+            //    Console.WriteLine("Different level!");
 
             Image<Rgba32> image;
             if (imageHeader.ImageSourcePixelFormat == TxmPixelFormat.PSMT8 || imageHeader.ImageSourcePixelFormat == TxmPixelFormat.PSMT4)
@@ -209,8 +217,7 @@ namespace LibDgf.Graphics
                 throw new NotSupportedException("Unsupported pixel format");
             }
 
-            image.SaveAsPng(outPath);
-            image.Dispose();
+            return image;
         }
 
         public static Image<Rgba32> ConvertTxmIndexed8bpp(BinaryReader br, int width, int height, Rgba32[] palette)

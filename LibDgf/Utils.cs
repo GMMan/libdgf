@@ -25,5 +25,10 @@ namespace LibDgf
             }
             return stream;
         }
+
+        public static double Convert12BitFixedToDouble(int value)
+        {
+            return value * 0.000244140625; // value / 2^12
+        }
     }
 }

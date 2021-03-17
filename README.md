@@ -11,6 +11,10 @@ Currently implemented
 - font/*.pak: font pack
 - Sound effects catalog (read support only)
 - TXM: texture files
+- PDB/TDB/DB2: Mesh formats (typically contained inside DAT, read support only)
+
+**PlayStation 2**
+- VIF emulator (partial)
 
 **Aqualead (Plug & Play)**  
 (read support only currently)
