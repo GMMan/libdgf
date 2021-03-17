@@ -45,6 +45,11 @@ namespace LibDgf.Graphics.Mesh
             }
         }
 
+        public void ConvertObj(Tdb tdb, StreamWriter sw)
+        {
+            WriteObj(tdb, sw, 1);
+        }
+
         TxmHeader CreateTexture(Tdb tdb, int index, out ulong textureId)
         {
             var tdbTexture = tdb.Textures[index];
@@ -266,7 +271,7 @@ namespace LibDgf.Graphics.Mesh
             }
         }
 
-        public void ExportTextures(StreamWriter mtlWriter, string outputPath)
+        public void ExportTextures(StreamWriter mtlWriter, string outputPath, bool forceDirect = false)
         {
             if (disposedValue) throw new ObjectDisposedException(GetType().FullName);
             if (textureDat == null) throw new InvalidOperationException("No texture pack supplied.");
@@ -290,24 +295,43 @@ namespace LibDgf.Graphics.Mesh
                     try
                     {
                         // Check if TXM is already suitable
-                        if (/*pakTxm.ImageSourcePixelFormat == textureTxm.ImageSourcePixelFormat &&*/
+                        if (forceDirect ||
+                            /*pakTxm.ImageSourcePixelFormat == textureTxm.ImageSourcePixelFormat &&*/
                             pakTxm.ImageBufferBase == textureTxm.ImageBufferBase &&
                             pakTxm.ClutPixelFormat == textureTxm.ClutPixelFormat &&
                             pakTxm.ClutBufferBase == textureTxm.ClutBufferBase)
                         {
                             // Use TXM as-is
                             txmMs.Seek(0, SeekOrigin.Begin);
-                            img = TxmConversion.ConvertTxmToImage(txmMs);
+                            if (new string(txmBr.ReadChars(4)) == "DAT\0")
+                            {
+                                // Unwrap DAT
+                                txmMs.Seek(0, SeekOrigin.Begin);
+                                using (DatReader txmDat = new DatReader(txmMs))
+                                {
+                                    if (txmDat.EntriesCount != 1)
+                                        throw new InvalidDataException("Nested texture DAT contains more than one file.");
+                                    using (MemoryStream innerStream = new MemoryStream(txmDat.GetData(0)))
+                                    {
+                                        img = TxmConversion.ConvertTxmToImage(innerStream);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                txmMs.Seek(0, SeekOrigin.Begin);
+                                img = TxmConversion.ConvertTxmToImage(txmMs);
 
-                            // Dump palette
-                            //if (pakTxm.ClutPixelFormat != TxmPixelFormat.None)
-                            //{
-                            //    txmMs.Seek(0x10, SeekOrigin.Begin);
-                            //    using (var palette = TxmConversion.ConvertTxmRgba32(txmBr, pakTxm.ClutWidth, pakTxm.ClutHeight))
-                            //    {
-                            //        palette.SaveAsPng($"palette_{numWrittenTextures}.png");
-                            //    }
-                            //}
+                                // Dump palette
+                                //if (pakTxm.ClutPixelFormat != TxmPixelFormat.None)
+                                //{
+                                //    txmMs.Seek(0x10, SeekOrigin.Begin);
+                                //    using (var palette = TxmConversion.ConvertTxmRgba32(txmBr, pakTxm.ClutWidth, pakTxm.ClutHeight))
+                                //    {
+                                //        palette.SaveAsPng($"palette_{numWrittenTextures}.png");
+                                //    }
+                                //}
+                            }
                         }
                         else
                         {
